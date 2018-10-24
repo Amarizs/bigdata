@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
-public class BaiscThreadPool extends Thread implements ThreadPool{
+public class BasicThreadPool extends Thread implements ThreadPool{
     //初始化线程数量
     private final int initSize;
     //线程池最⼤线程数量
@@ -27,13 +27,13 @@ public class BaiscThreadPool extends Thread implements ThreadPool{
     private final TimeUnit timeUnit;
 
     //构造时需要传递的参数：初始的线程数量，最⼤的线程数量，核⼼线程数量，任务队列的最⼤数量
-    public BaiscThreadPool(int initSize, int maxSize, int coreSize,int queueSize)
+    public BasicThreadPool(int initSize, int maxSize, int coreSize, int queueSize)
     {
         this(initSize, maxSize, coreSize, DEFAULT_THREAD_FACTORY,
                 queueSize, DEFAULT_DENY_POLICY, 10, TimeUnit.SECONDS);
     }
     //构造线程池时需要传⼊的参数，该构造函数需要的参数⽐较多
-    public BaiscThreadPool(int initSize, int maxSize, int coreSize,
+    public BasicThreadPool(int initSize, int maxSize, int coreSize,
                            ThreadFactory threadFactory, int queueSize,
                            DenyPolicy denyPolicy, long keepAliveTime, TimeUnit timeUnit)
     {
@@ -139,36 +139,55 @@ public class BaiscThreadPool extends Thread implements ThreadPool{
 
     @Override
     public void shutdown() {
-
+        synchronized (this) {
+            if (isShutdown) return;
+            isShutdown = true;
+            threadQueue.forEach(threadTask ->
+            {
+                threadTask.internalTask.stop();
+                threadTask.thread.interrupt();
+            });
+            this.interrupt();
+        }
     }
 
     @Override
     public int getInitSize() {
-        return 0;
+        if (isShutdown)
+            throw new IllegalStateException("The thread pool is destroy");
+        return this.initSize;
     }
 
     @Override
     public int getMaxSize() {
-        return 0;
+        if (isShutdown)
+            throw new IllegalStateException("The thread pool is destroy");
+        return this.maxSize;
     }
 
     @Override
     public int getCoreSize() {
-        return 0;
+        if (isShutdown)
+            throw new IllegalStateException("The thread pool is destroy");
+        return this.coreSize;
     }
 
     @Override
     public int getQueueSize() {
-        return 0;
+        if (isShutdown)
+            throw new IllegalStateException("The thread pool is destroy");
+        return runnableQueue.size();
     }
 
     @Override
     public int getActiveCount() {
-        return 0;
+        synchronized (this) {
+            return this.activeCount;
+        }
     }
 
     @Override
     public boolean isShutDown() {
-        return false;
+        return this.isShutdown;
     }
 }
