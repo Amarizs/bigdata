@@ -3,7 +3,6 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/chen-core" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/chen-exector" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/chen-executor" charset="UTF-8" />
   </component>
 </project>

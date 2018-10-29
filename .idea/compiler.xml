@@ -10,12 +10,5 @@
         <module name="chen-executor" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="bigdata" target="1.8" />
-      <module name="chen-core" target="1.8" />
-      <module name="chen-exector" target="1.7" />
-      <module name="chen-executor" target="1.8" />
-      <module name="chen-mybatis" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>
